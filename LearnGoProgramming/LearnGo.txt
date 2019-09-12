@@ -1,0 +1,16 @@
+1. A First Step in Go
+1.1. The Go programming language
+1.1.1. Two branches from C
+1.1.1.1. C++, Java, C#, strong type
+1.1.1.2. Perl, Python, JavaScript, dynamic type
+1.1.2. Go is an attempt to combine the safety and performance of a statically-typed language with the expressiveness and convenience of a dynamically-typed interpreted language
+1.1.2.1. Simplified but concise syntax that is fun and easy to use
+1.1.2.2. A type of system that feels more like a dynamic language
+1.1.2.3. Support for object-oriented programming
+1.1.2.4. Statically typed for compilation and runtime safety
+1.1.2.5. Compiled to native binaries for fast runtime execution
+1.1.2.6. Near-zero compilation time that feels more like an intepreted language
+1.1.2.7. A simple concurrency idiom to leverage multi-core, multi-chip machines
+1.1.2.8. A garbage collector for safe and automatic memory management
+1.2. Playing with Go
+1.2.1. 

@@ -1,0 +1,54 @@
+1. Containers and Data Structures
+1.1. Counting frequencies
+1.1.1. collections.Counter object is needed
+1.1.2. dict.get is useful, it can deal with default Containers
+1.1.3. collections.defaultdict is useful
+# python
+from collections import defaultdict
+counts = defaultdict(int)
+for word in 'hello world this is a very nice day'.split():
+    counts[word] += 1
+# ~
+1.2. Dictionary with fallback
+1.2.1. dict.get is useful, but can't help much
+1.2.2. collections.ChainMap is a very useful
+1.3. Unpacking multiple keyword arguments
+1.3.1. ** to unpack
+# python
+def f(a, b, c, d):
+	print(a, b, c, d)
+d1 = dict(a=5, b=6)
+d2 = dict(b=7, c=8, d=9)
+f(**ChainMap(d1, d2) => 5, 6, 8, 9
+f(**{**d1, **d2}) => 5, 7, 8, 9(post cover pre)
+# ~
+1.4. Ordered dictionaries
+1.4.1. collections.OrderedDict is useful
+1.5. MultiDict
+1.6. Prioritizing entries
+1.7. Bunch
+1.8. Enumerations
+1.8.1. enum.Enum is useful
+2. Text Management
+2.1. Pattern matching
+2.1.1. fnmatch is useful
+2.1.1.1. * means any text
+2.1.1.2. ? means any character
+2.1.1.3. [...] means the contained characters within square brackets
+2.1.1.4. [!...] means everything apart from the characters contained within the square brackets
+2.1.1.5. fnmatch.fnmatch('hello.txt', '*.txt') => True
+2.1.1.6. fnmatch.fnmatch('hello.zip', '*.txt') => False
+2.1.2. fnmatch.filter is useful
+2.2. Text similarity
+2.2.1. difflib.SequenceMatcher is useful
+# python
+s = 'Today the weather is nice'
+s2 = 'Today the weater is nice'
+s3 = 'Yesterday the weather was nice'
+s4 = 'Today my dog ate steak'
+import difflib
+difflib.SequenceMatcher(None, s, s2, False).ratio() => 0.97959183
+difflib.SequenceMatcher(None, s, s3, False).ratio() => 0.8
+difflib.SequenceMatcher(None, s, s4, False).ratio() => 0.46085106
+# ~
+2.2.2. difflib.SequenceMatcher().get_match_blocks() is useful

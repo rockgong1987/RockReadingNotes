@@ -1,0 +1,30 @@
+1. 环境搭建
+2. 新建项目-空项目
+3. 编译行语言
+3.1. 预编译头，编译速度差别大
+3.2. 添加头文件，预编译头
+3.3. 常用头文件都放进预编译头
+3.4. cpp文件一个预编译源文件一个程序的入口
+3.5. 右击源文件，属性，预编译头，设置预编译头（预编译cpp/Yc，程序入口cpp/Yu）和下面的用哪个预编译头
+4. pragma
+4.1. #pragma warning(diable:4996) //忽略4996提示
+4.2. #pragma comment(linker, "/entry:mainCRTStartup /subsystem:windows")
+5. 入口
+5.1. int _tmain(int argc, _TCHAR* argv[])
+6. API
+6.1. AllocConsole()添加一个调试窗口
+6.2. system("color 0A")控制台颜色，0背景黑色，A草绿色字
+6.3. freopen C标准库API，重定向输入输出流
+6.3.1. freopen("conin$", "r+t", stdin);
+6.3.2. freopen("conout$", "w+t", stdout);
+6.4. SetConsoleTitleA(const char* xxx) A:Ascii，设置命令行窗口title
+6.5. GetModuleFileName(HMODULE handler, pBuf, len) 获得Module的完整路径，模块句柄为NULL则是当前运行的程序
+6.6. rename C标准库函数，重命名文件，更改文件路径，更改路径名称
+6.7. GetConsoleWindow() 获得console窗口句柄
+6.8. SetWindowPos(hwnd, hWndInsertAfter(0), 0, 0, W, H, SWP_NOMOVE) 设置窗口位置大小
+7. ECT
+7.1. 反汇编窗口要学会用
+7.2. 寄存器窗口要学会用
+7.3. EAX一般存返回值
+7.4. 内存快速监视，注意使用(可以弄成浮标)
+7.5. std.wcout.imbue(std::locale("CHS"));// 让wcout输出中文

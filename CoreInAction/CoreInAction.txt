@@ -1,0 +1,22 @@
+1. Why .NET Core?
+1.1 What Is .NET Core
+1.2 Framework features not ported to Core
+1.2.1. WPF/XAML
+1.2.2. Transactions
+1.2.3. AppDomains
+1.2.4. .NET remoting
+1.2.5. ASMX
+1.2.6. Linq to SQL
+1.2.7. WCF
+1.2.8. WF
+2. Building your first .NET Core applications
+3. How to build with .NET Core
+4. Unit testing with xUnit
+5. Working with relational databases
+6. Simplify data access with object-relational mappers
+7. Creating a microservice
+8. Debugging
+9. Performance and profiling
+10. Building world-ready applications
+11. Multiple frameworks and runtimes
+12. Prepareing for release

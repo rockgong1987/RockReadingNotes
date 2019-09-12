@@ -1,0 +1,136 @@
+1. Introduction
+2. OpenGL
+2.1. OpenGL library is developed by graphic card manufacturers
+2.2. Core-profile vs Immediate mode
+2.2.1. Immediate mode (fixed function pipeline)
+2.2.1.1. OpenGL spec start to deprecate Immediate mode from version 3.2(promote core-profile mode)
+2.2.1.2. this book is Core-Profile OpenGL version 3.3
+2.2.1.3. future versions from 3.3 add extra useful features without changing core mechanics
+2.2.2. Extensions
+2.2.2.1. extensions developed by graphic card manufacturers, to reinforce OpenGL, despite the spec
+2.2.2.2. if (GL_ARB_extension_name) {cool stuff} else {old school}
+2.3. State machine
+2.3.1. it has state-changing and state-using functions
+2.4. Objects
+2.4.1. an OBJECT in OpenGL is a collection of options that represents a subset of OpenGL's state
+2.4.2. 
+    unsigned int objectId = 0;
+    glGenObject(1, &objectId);
+    glBindObject(GL_WINDOW_TARGET, objectId);
+    glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_WIDTH, 800);
+    glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_HEIGHT, 600);
+    glBindObject(GL_WINDOW_TARGET, 0); // unbind
+3. Creating a window
+3.1. GLFW
+3.1.1. create OpenGL context, define window parameters and handle user input
+3.1.2. We are using glfw3
+3.2. Building GLFW
+3.2.1. CMake
+3.2.2. Compliation
+3.3. Our first project
+3.4. Linking
+3.4.1. OpenGL library on Windows
+3.4.1.1. opengl32.lib in input option is needed
+3.4.2. OpenGL library on Linux
+3.4.2.1. OpenGL -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi option is needed
+3.5. GLAD, to avoid fetch OpenGL function address at run-time
+3.5.1. Seting up GLAD
+3.5.1.1. glad.dav1d.de is needed
+3.5.1.2. specify api version and get the zip file containing 2 include folders and glad.c
+4. Hello window
+4.1. GLAD
+4.1.1. gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) to init glad
+4.2. Viewport
+4.2.1. glViewport(0, 0, 800, 600)
+4.2.2. glfwSetFramebufferSizeCallback(window, framebuffer_size_callback) to setup a callback for resize
+4.3. Ready your engines
+5. Hello Triangle
+5.1. NDC(normalized device coordinate), x, y, y, -1.0 ~ 1.0
+5.2. VBO(vertex buffer objects)
+5.3. unsigned int VBO; glGenBuffers(1, &VBO);
+5.4. glBindBuffer(GL_ARRAY_BUFFER, VBO);
+5.5. glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+5.5.1. GL_STATIC_DRAW(not change at all), GL_DYNAMIC_DRAW(change a lot), GL_STREAM_DRAW(change every time it is drawn)
+5.6. unsigned int vertexShader; vertexShader = glCreateShader(GL_VERTEX_SHADER);
+5.7. glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+5.8. glCompileShader(vertexShader);
+5.8.1. Fetch Shader Compile Error : glGetShaderiv(vshader, GL_COMPILE_STATUES, $success);
+5.8.2. Fetch Shader infoLog : glGetShaderInfoLog(vshader, 512, NULL, infoLog);
+5.9. unsigned int shaderProgram; shaderProgram = glCreateProgram();
+5.10. glUseProgram(shaderProgram);
+5.11. glDeleteShader(vertexShader);
+5.12. glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+5.13. glEnableVertexAttribArray(0);
+5.14. VAO(vertex array object)
+5.15. unsigned int VAO; glGenVertexArrays(1, &VAO); glBindVertexArray(VAO); glDrawArray(GL_TRIANGLES, 0, 3);
+5.16. EBO(element array object)
+5.17. glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+5.18. glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+6. Shaders
+6.1. GLSL
+6.1.1. typical structure
+6.1.1.1. #version version_number
+6.1.1.2. in type in_variable_name;
+6.1.1.3. in type in_variable_name;
+6.1.1.4. out type out_variable_name;
+6.1.1.5. uniform type uniform_name;
+6.1.1.6. void main() {
+6.1.1.7. out_variable_name = weird_stuff_we_processed;
+6.1.1.8. }
+6.2. vertex attribute has count limited, at least 16 4-component, but more by querying GL_MAX_VERTEX_ATTRIBS
+6.3. Types
+6.3.1. Vectors
+6.3.1.1. vecn : vector of n floats
+6.3.1.2. bvecn : vector of n booleans
+6.3.1.3. ivecn : vector of n integers
+6.3.1.4. uvecn : vector of n unsigned integers
+6.3.1.5. dvecn : vector of n double components
+6.3.2. Vector swizzling : vec4 v1 = v0.xyxx; vec4 v2 = v0.xxxx + v1.yxzy; ...
+6.4. Ins and Outs
+6.4.1. in vertex shader, input location is important
+6.4.1.1. use layout (location = 0) in shader to specify
+6.4.1.2. use glGetAttribLocation in C code to specify
+6.4.2. fragment shader requires a vec4 color output, or your fragment shader will render black/white
+6.4.3. in shader linking stage, the sending shader out var can link to receiving shader in var, by name
+6.5. Uniforms(Passing data from CPU to GPU)
+6.5.1. Uniforms are global
+6.5.2. Uniforms keep value until reset or updated
+6.5.3. Uniforms will be stripped out at compile-time, if you don't use them
+6.5.4. int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor"); returns the uniform location of ourColor
+6.5.4.1. return -1 when shader cannot found "outColor"
+6.5.4.2. no need to glUseProgram
+6.5.5. glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); to set uniform value
+6.5.5.1. DOES NEED to call glUseProgram first
+6.6. More attributes
+6.6.1. location = 0 and location = 1 in shader specify the attribute offset
+6.6.2. glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+6.6.3. glEnableVertexAttribArray(0);
+6.6.4. glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+6.6.5. glEnableVertexAttribArray(1);
+6.7. Shader Class
+7. Textures
+7.1. Texture Wrapping : GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER(clamp to a user-specified border color)
+7.1.1. They are set by glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S/T, GL_MIRRORED_REPEAT/xxxxx);
+7.2. Texture Filtering : GL_NEAREST, GL_LINEAR
+7.2.1. They are set by glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN/MAG_FILTER, GL_NEAREST/LINEAR)
+7.3. Mipmaps
+7.3.1. Generate by glGenerateMipmaps
+7.3.2. glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+7.3.3. glTexParameteri(GL_TExTURE_2D, GL_TEXTURE_MAX_FILTER, GL_LINEAR);
+7.4. Loading and creating textures
+7.4.1. stb_image.h is a useful library
+7.4.2. unsigned int texture; glGenTextures(1, &texture); to generate textures
+7.4.3. glBindTexture(GL_TEXTURE_2D, texture);
+7.4.4. glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+7.4.5. glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+7.4.6. glEnableVertexAttribArray(2);
+7.4.7. in vertex shader : out vec2 TexCoord;
+7.4.8. in vec2 TexCoord;(for link with vertex shader)uniform sampler2D ourTexture;FragColor = texture(ourTexture, TexCoord);
+7.5. Texture Units
+7.5.1. glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D, texture1);glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_2D, texture2);
+7.5.2. use glUniform1i to bind texture is also ok;
+8. Transformations
+8.1. use GLM to handle opengl math
+9. Coordinate Systems
+10. Camera
+11. Review

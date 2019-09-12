@@ -1,0 +1,471 @@
+1. Introducing the Godot Engine
+1.1. add _sc_ folder near exe, lead to Self-Contained Mode, all config file portable
+1.2. console window is not included in release build
+1.3. Editor > Editor Layout, to edit and save/load layout
+1.4. Node dock to operate SIGNALs and GROUPs
+1.5. Import dock to config asset import setting
+1.6. Visual Scripting like Blueprints
+1.7. Project Settings page, top tabs and left items
+1.8. No multiple script attachment in one Node
+2. Scene System
+2.1. Node is fundamental element
+2.2. game loop
+2.2.1. idle game loop, every frame is drawn as fast as possible
+2.2.2. fixed game loop, synchronized with the physics loop
+2.3. Scene is a nodes in a tree structure
+2.3.1. nodes are processed in tree order, root receive process callback before children
+2.3.2. nodes are drawn in tree order. parents drawn before children
+2.3.3. nodes inherit the transform of their parents
+2.4. Resources
+2.4.1. Nodes represents behaviors, Resources represent data
+2.4.2. Resources can be created via New Resource button, but rarely used this way
+2.5. Custom Nodes and Resources
+2.5.1. it's possible to create your own node types by creating new editor plugins
+2.6. Inspecting and Editing Resources
+2.6.1. back and history button, to find previous edited object
+2.6.2. some resource types have custom editors. etc. Theme Resource
+2.7. Resource Locations and Uniqueness
+2.7.1. Resources can either be saved inside the scene file or as its own separate file
+2.7.2. Resources are shared by default
+2.7.3. Make Unique button to make Resources unique(not shared)
+2.8. Combining Scenes
+2.8.1. Inheritance is a way to create derived scenes from a same base.
+2.8.1.1. Inheriting scenes is the same as instancing them as the root nod for a new scene
+2.8.1.2. created by New Inherited Scene button
+2.8.2. Instancing Scenes
+2.8.2.1. origin changes affect instances, instance changes do not affect origins
+2.8.3. Managing Subscenes
+2.8.3.1. Open Subscene button (movie icon) to open subscene
+2.8.3.2. right-click the Subscene, Editable Children to show subscene structure and edit
+2.8.3.3. right-click discard instancing to unlink(Make Local in 3.1 ?)
+2.8.3.4. Save Branch as Scene to split a subtree as a new scene
+2.8.3.5. Godot checks Cyclic Dependencies, if A -> B -> C, then instance A in C is not allowed
+3. 2D Graphics
+3.1. Sprites and DrawOrder
+3.1.1. Sprites drawn in tree order
+3.1.2. RemoteTransform2D node to break the order
+3.1.3. Sprite is used as character, prop, HUD. support region render
+3.1.4. Texture Region Editor(in the bottom panel) is used when select a Sprite
+3.1.5. Animation properties is sometimes more useful for spritesheet animation
+3.2. Vector and transform
+3.2.1. var m = vector.length() in GDScript
+3.2.2. var u = vector.normalized() in GDScript
+3.2.3. var rotate_matrix = Transform2D().rotated(deg2rad(90)) in GDScript
+3.2.4. var scale_matrix = Transform2D().scaled(Vector2(2, 2))
+3.2.5. var translate_matrix = Transform2D().translated
+3.2.6. var combined_matrix = translate_matrix * rotate_matrix * scale_matrix
+3.2.7. var $my_node.transform *= combined
+3.3. Cameras
+3.3.1. Camera2D put wherever you want
+3.3.2. Camera2D has many properties
+3.3.2.1. Offset, changes the camera center
+3.3.2.2. Anchor Mode, center or fixed top left
+3.3.2.3. Rotating, is useful
+3.3.2.4. Current, sets the active camera, there can be only one current camera per viewport
+3.3.2.5. Zoom, is useful
+3.3.2.6. Limits, clip plane
+3.3.2.7. Drag Margins, check the parent position to decide stay or follow the parent
+3.3.2.8. Smoothing, if enabled, camera perform smooth transition
+3.3.3. Cameras is useful when making split-screen games, one camera for one Viewport
+3.4. TileMaps
+3.4.1. Godot has TileMap node specifically for this purpose
+3.4.2. Make a tileset
+3.4.2.1. create a scene, edit the scene with some Sprite nodes
+3.4.2.2. if need physics, use StaticBody2D and CollisionShape2D
+3.4.2.3. Scene > Convert To > TileSet to generate tileset resource
+3.4.2.4. Edit menu, Use Snap and Show Grid options is useful
+3.4.3. Use TileMaps
+3.4.3.1. Selete TileMap node and use the brush to edit
+3.4.3.2. TileMap has many properties
+3.4.3.2.1. Tile position, the first item shows the current position of the mouse in tile coordinate
+3.4.3.2.2. TileMap, some functions to edit TileMap
+3.4.3.2.3. Bucket, filling enclosed area
+3.4.3.2.4. Pick Tile, like color picker
+3.4.3.2.5. Select, select portion
+3.4.3.2.6. Duplicate selection, copy
+3.4.3.2.7. Erase Selection, delete
+3.4.3.2.8. Transpose, row colums exchange
+3.4.3.2.9. Mirror X, mirrors the tile in the horizontal axis.
+3.4.3.2.10. Mirror Y, Mirrors the tile in the vertical axis.
+3.4.3.2.11. Rotate Buttons, 0, 90, 180, 270 rotations
+3.4.3.3. Tile Map Editor is third party tile map editor in Asset Library
+3.4.3.4. Other Projections
+3.4.3.4.1. Isometric
+3.4.3.4.2. Use Custom Transform
+3.5. ParallaxBackground
+3.5.1. ParallaxBackground node, with ParallaxLayer nodes
+3.5.1.1. ParallaxBackground offset, base offset, base scale limit begin/end, Ignore camera zoom is useful
+3.5.1.2. ParallaxLayer Scale, Offset Mirroring is useful
+3.5.1.3. General construct : one parallex background + n parallex layer, all stuff is layer's children
+3.5.1.4. control offset to control layer speed relative to camera
+4. Scripting
+4.1. Node and Script Relationship(skip)
+4.2. Introduction to GDScript
+4.2.1. Nice capability to quick prototype
+4.2.2. Whitespace-sensitive syntax(like Python, Haskell)
+4.2.3. special virtual methods need to override start with underscore(_), like _ready, _process
+4.2.4. _ready() call at start
+4.2.5. _process(delta) call every frame
+4.2.6. Input.is_action_pressed("xxxx") is for keyboard is_action_pressed
+4.2.7. var name = expression, initialization syntax
+4.2.8. _input(event): if event.is_action_pressed("xxxxx")
+4.3. Interfacing with Other Nodes
+4.3.1. get_node, param is relative path to current node (UNIX style path)(support .. back)
+4.3.1.1. use $ instead of get_node
+4.3.2. can call other Node's methods
+4.4. Signals and Groups
+4.4.1. func _on_Button_pressed():print("xxxx") func _ready(): $Button.connect("pressed", self, "_onButton_pressed")
+4.4.1.1. or use Node dock to do the same thing
+4.4.2. connecting signals to built-in methods, like "queue_free" can be a real timesaver
+4.4.3. signal test_signal(some_argument, another_argument) in GDScript to define a custom signal
+4.4.3.1. emit_signal("test_signal") to emit signal
+4.4.4. Groups (like a tag)
+4.4.4.1. object.add_to_group("shootable") in GDScript to add a object to a group by code
+4.4.4.2. get_tree().call_group("group_name", "method_name")
+5. Game1 space shooter
+5.1. AnimatedSprite to animation
+5.2. Timer to emit signal with time
+5.3. Project Setting, Display > Window, Width/Height to set game window size, Test Width/Test Height to set window size for testing
+5.4. Stretch > Mode to set stretch mode, can support 'logic size'
+5.5. Texture import preset has '2D pixel', a pixel-art-friendly setting
+5.6. Timer has time_out signal, need start manually
+5.7. CanvasLayer separates all its child node into a new canvas layer defined by the Layer property in the Inspector
+5.8. use preload('res://scenes/shot.tscn') to preload for later instantiation
+5.9. use shot_scene.instance() to instantiate a shot
+5.10. use Node.add_child(shot_instance) add a child
+5.11. use queue_free() to delete self(in the end of current frame)
+6. More Scripting
+6.1. Notifications
+6.1.1. _notification(what) func to response notify
+6.1.2. what could be MainLoop.NOTIFICATION_WM_FOCUS_IN and NOTIFICATION_WM_FOCUS_OUT...
+6.1.3. object.notification(int what, bool reverse=false) to send notification
+6.1.4. tip : left click to open help in editor
+6.1.5. NOTIFICATION_PREDELETE is useful, used to handler some destructure operation
+6.1.6. get_tree().quit() to quit game
+6.2. Singletons and Autoloads
+6.2.1. Commonly Used Singletons
+6.2.1.1. ResourceLoader: ResourceLoader.load_interactive can be used to load resources async
+6.2.1.2. OS: os functions
+6.2.1.3. Engine: get_frames_per_second(), get_version_info(), get_target_fps(), get_frames_drawn()
+6.2.1.4. ClassDB: ClassDB.instance(class_name), class_get_method_list, class_get_signal_list, get_inheriters_from_class
+6.2.1.5. ProjectSettings: get and set Project settings, don't forget to call save method
+6.2.1.6. InputMap: add_action and action_add_event
+6.2.1.7. Performance: can monitor draw call and soon
+6.2.1.8. Input: get input state
+6.2.2. Autoload
+6.2.2.1. An autoload is a node that gets loaded at startup and stays loaded for the entire runtime of the application/game.
+6.2.2.2. An autoload is always located in the scene tree as a child of the root node
+6.2.2.3. autoload need to be set up in Project Settings page
+6.2.2.4. use $"/root/GameState.xxxxx" to access autoload
+6.3. Editor Tools
+6.3.1. use "tool" keyword first line
+6.3.2. extend EditorScript second line
+6.3.3. override _run()
+6.3.4. node.set_owner(get_scene()) is useful
+6.4. EditorInterface
+6.4.1. get_editor_settings, get_editor_viewport, get_open_scenes, open_scene_from_path, save_scene, save_scene_as...
+6.4.2. some_object.some_method(a, b) equals some_object.callv("some_method", [a, b])
+7. Handling Input
+7.1. Input Basics
+7.1.1. use _input(event)
+7.1.1.1. use get_tree().get_input_as_handled() to prevent other nodes from responding to it again
+7.1.1.2. use set_process_input(enable) to manually start or stop getting input callback
+7.1.1.3. func _unhandled_input(event) to handle unhandled input(not marked handled in _input)
+7.1.1.4. Special input Handling
+7.1.1.4.1. Viewport node can check for mouse position inside itself
+7.1.1.4.2. CollisionObject and CollisionObject2D, can receive input events through Camera(click on objects)
+7.1.1.4.3. Control, _gui_input(event)
+7.1.2. use Input singleton
+7.1.2.1. Input.is_key_pressed(scancode)
+7.1.2.2. Input.is_mouse_button_pressed(button)
+7.1.2.3. Input.is_joy_button_pressed(device, button)
+7.2. InputEvent class
+7.2.1. Subclasses
+7.2.1.1. InputEventAction
+7.2.1.2. InputEventJoypadButton - for joystick or gamepad
+7.2.1.3. InputEventJoypadMotion - for joystick hat movement
+7.2.1.4. InputEventScreenDrag - for swiping on a touch screen
+7.2.1.5. InputEventScreenTouch - for tapping on a touch screen
+7.2.1.6. InputEventWithModifiers Subclasses
+7.2.1.6.1. InputEventKey - for keyboard buttons
+7.2.1.6.2. InputEventMouse subclasses
+7.2.1.6.2.1. InputEventMouseButton - for mouse buttons
+7.2.1.6.2.2. InputEventMouseMotion - for mouse movement
+7.3. Keyboard and Joystick Input
+7.3.1. Keyboard Input
+7.3.1.1. if event is InputEventKey: if event.pressed: prints("Key pressed")
+7.3.1.2. OS.get_scancode_string(scancode) to get input code string
+7.3.1.3. event.echo to check input echo
+7.3.2. Joystick Input
+7.3.2.1. if event is InputEventJoypadButton:prints("Buttons:", str(event.button_index))
+7.3.2.2. JOY_BUTTON_XXX pattern in button_index
+7.4. Mouse and Touch Input
+7.4.1. if event is InputEventMouseButton && event.pressed:...
+7.4.2. if event is InputEventMouseMotion: ...
+7.4.3. if event is InputEventScreenTouch && event.pressed:...
+7.4.4. if event is InputEventScreenDrag:...
+7.5. Input Mapping
+7.5.1. Action is a group of input events that achieve the same task
+7.5.2. func _input(event): if event.is_action("move_up"):...
+7.5.3. func _process(delta): if Input.is_action_pressed("move_up"):...
+7.5.4. Project > Project Settings > Input Map to setup input map
+7.5.5. InputMap Singleton
+7.5.5.1. InputMap.get_actions() the list of action_add_event
+7.5.5.2. InputMap.get_action_list(action) get action list
+7.5.5.3. Input.parse_input_event(InputEventAction action) ???
+7.5.5.4. Devices can not create InputEventAction
+8. Physics System
+8.1. Bodies and Shapes
+8.1.1. Physics Bodies
+8.1.1.1. Static : does not move but interacts with other objects
+8.1.1.2. Rigid : interacts with physics engine
+8.1.1.3. Kinematic : not affected by physics but need move and detect collisions
+8.1.1.4. Vehicle : 3DRoad-traveling vehicles only
+8.1.2. Collision Shapes
+8.1.2.1. Debug > Visible Collision Shapes to make collision shape visible in game
+8.1.2.2. multiple collision nodes for one body is allowed
+8.1.2.3. One-way collision is useful
+8.1.3. Types of Physics Bodies
+8.1.3.1. Static Body, RigidBody
+8.1.4. Moving a Kinematic Body
+8.1.4.1. move_and_slide(movement) method is useful
+8.1.4.2. export (float) var speed = 100.0
+8.1.4.3. func _physics_process(delta)
+8.2. Areas and Presence Detection
+8.2.1. Area Monitoring property is useful
+8.2.2. get_overrlapping_areas() and get_overlapping_bodies() to check
+8.3. Ray Casting
+8.3.1. RayCast node is useful
+8.3.2. Ray Casting via Scripting
+8.3.2.1. get_world_2d().get_direct_space_state()
+8.3.2.2. get_world().get_direct_space_state()
+8.3.2.3. then use intersect_ray method
+8.4. Navigation and Path Finding
+8.4.1. Following Predefined Paths
+8.4.1.1. Path and PathFollow, Path2D and PathFollow2D is useful
+8.4.2. Basic Path Finding
+8.4.2.1. Navigation and Navigation2D node is useful
+8.4.2.2. generate a NavigationMeshInstance from a MeshInstance
+8.4.2.3. Navigation2D get_simple_path is useful
+9. User Interface
+9.1. Control is a node inherited from CanvasItem, also Node2D
+9.1.1. Control sizing is relative to the parent
+9.1.2. Control has Minimum size, for labels that's content
+9.1.3. CanvasItem has Show Behind Parent option
+9.1.4. Use Anchor button on the top of the scene view
+9.1.5. Properties for control is similar to UGUI
+9.1.6. Hint is for tooltips
+9.2. Know your controls
+9.2.1. Label : text,align and valign,autowrap,clip_text
+9.2.2. RichTextLabel : (BBCode)
+9.2.4. LineEdit : single line text area
+9.2.5. TextEdit : multi-line text area
+9.2.6. Range : min_value/max_value, value, step
+9.2.7. ProgressBar
+9.2.8. TextureProgress
+9.2.9. Slider
+9.2.10. SpinBox
+9.2.11. BaseButton, disabled, toggle_mode, pressed, shortcut, group, button_up()/button_down(), pressed(), toggled(bool pressed)
+9.2.12. Button
+9.2.13. TextureButton
+9.2.14. CheckBox and CheckButton
+9.2.15. OptionButton
+9.2.16. ColorPickerButton
+9.2.18. PopupPanel
+9.2.19. PopupMenu, id_pressed/index_pressed siganl
+9.2.20. WindowDialog
+9.2.21. AcceptDialog
+9.2.22. ConfirmationDialog
+9.2.23. FileDialog, mode, access, fileters, show_hidden_files, dir_selected signal, file_selected signal, files_selected signal
+9.2.24. ItemList
+9.2.25. TextureRect, has strecth mode
+9.2.26. ColorRect
+9.2.27. NinePatchRect - important
+9.2.28. BoxContainer
+9.2.29. SplitContainer
+9.2.30. MarginContainer
+9.2.31. ScrollContainer
+9.2.32. TabContainer
+9.3. Making an Interface
+9.3.1. $AcceptDialog.dialog_text = "You are ..."
+9.3.2. $AcceptDialog.popup()
+9.4. Theme
+9.4.1. use New Resource to create a Theme resource
+9.4.2. Theme has a dock view to check appearance
+9.4.3. Theme button on the left-top, then add item
+9.4.4. StyleBox can also be add through theme button > add item, pick style on type
+9.4.4.1. StyleBoxEmpty: draws nothing
+9.4.4.2. StyleBoxFlat: draw a single color
+9.4.4.3. StyleBoxTexture: draws an image similar to a NinePatchRect
+9.5. Custom Control
+9.5.1. Can use GDScript to extend to basic control type
+10. Animation
+10.1. Animation Editor
+10.1.1. every animation needs to be assigned to a node called the AnimationPlayer
+10.1.1.1. AnimationPlayer can play any animation you give it
+10.1.1.2. AnimationPlayer can only play one animatino at a time
+10.1.2. Create a New Animatino with New Animation button on the Animation View
+10.1.3. Save the Animation is important
+10.1.4. Load the Animation with Open Animation button
+10.2. Timeline and Keyframes
+10.2.1. set the Length property
+10.2.2. keyframe position has step, default 0.1
+10.2.3. loop button to toggle loop
+10.2.4. the key icon right after the property create the keyframe
+10.2.5. Time and Value property is important for a keyframe
+10.2.6. Easing functions
+10.3. Scripting Animations
+10.3.1. Use auto play options on AnimationPlayer to Autoplay
+10.3.2. $AnimationPlayer.play("run")
+10.3.3. $AnimationPlayer.stop(needReset)
+10.3.4. $AnimationPlayer.is_playing()
+10.3.5. Animation Signals
+10.3.5.1. animation_changed(old_name, new_name)
+10.3.5.2. animation_finished(anim_name)
+10.3.5.3. animation_started(anim_name)
+10.3.6. call func track is useful, like animation event
+10.4. Blending and Transitioning Animations
+10.4.1. AnimationTreePlayer beside AnimationPlayer
+10.4.2. it's complex, try to watch some tutorial video
+11. Game Flow
+11.1. Scene Tree(A subclass of Main Loop)
+11.1.1. change_scene(string path)
+11.1.2. change_scene_to(PackedScene packed_scene)
+11.1.3. get_current_scene()
+11.1.4. is_paused()
+11.1.5. set_pause(bool paused)
+11.1.6. quit()
+11.1.7. reload_current_scene()
+11.1.8. set_auto_accept_quit(bool enabled)
+11.2. Pausing the game
+11.2.1. get_tree().get_paused(true)
+11.2.2. puase_mode = PAUSE_MODE_PROCESS to avoid pause
+11.3. Switching scenes
+11.4. Background loading
+11.4.1. ResourceLoader.load_interactive(path) returns loader
+11.4.2. loader.poll() return err if has error
+11.4.3. ResourceInteractiveLoader.get_resource() to get resource
+11.4.4. ResourceInteractiveLoader.wait() to wait for resource
+11.5. Handling a Quit Request
+11.5.1. use get_tree().set_auto_accept_quit(false) to prevent quit by close window
+11.5.2. use get_tree().quit() to actually quit
+12. File System
+12.1. Special Paths
+12.1.1. Resrouces res:// (case sensitive)
+12.1.2. User user://
+12.1.2.1. Windows: %APPDATA%/.godot/app_userdata/project_name
+12.1.2.2. Linux and MacOS: ~/.godot/app_userdata/project_name
+12.1.2.3. HTML5: The file system is mocked using the LocalStorage API
+12.1.2.4. Android, iOS, UWP application data
+12.2. Game Configuration
+12.2.1. var config = ConfigFile.new()
+12.2.2. config.set_value("options", "difficulty", "hard")...
+12.2.3. var err = config.save("user://config.ini")
+12.2.4. var err = config.load("user://config.ini")
+12.2.5. config.get_value("options", "difficulty")
+12.3. Dealing with Files
+12.3.1. var file = File.new()
+12.3.2. var err = file.open("user://xxx", File.WRITE)
+12.3.3. file.store_var(player_name)
+12.3.4. file.close()
+12.3.5. var err = file.open("user://xxx", File.READ)
+12.3.6. file.get_var()
+12.3.7. the order of store_var and get_var matters
+12.3.8. to_json and from_json to convert from dictionary to text
+12.3.9. use File.store_string() and File.get_as_text() to handle json
+12.4. Directories
+12.4.1. dir = Directory.new()
+12.4.2. dir.open("res://")
+12.4.3. dir.list_dir_begin()
+12.4.4. var name = dir.get_next()
+12.4.5. dir.current_is_dir()
+12.4.6. dir_list_dir_end()
+13. 3D Graphics
+13.1. Spatial Node
+13.1.1. GDScript + ImmediateGeometry  = dynamic MeshInstance
+13.2. Importing Meshes and Models
+13.2.1. obj file loses texture and animation
+13.2.2. a MeshInstance for a imported model
+13.2.3. MultiMesh is useful when too many MeshInstance has performance problem
+13.2.4. DAE is used to import complex model/scene
+13.2.4.1. for Blender, Better Collada Exporter is needed
+13.2.4.2. glTF may replace Collada in the near future
+13.3. 3D Editor
+13.3.1. Setting > 3d > Navigation Scheme is important
+13.3.2. View button on the top is useful
+13.3.3. camera shotcut is similar to Blender
+13.4. Camera
+13.4.1. Preview button on the top-left corner is useful
+13.4.2. Interpolated Camera is for focus on a target
+13.4.3. $Camera.set_current(true/false) is important
+14. Project Management
+15. Materials and Shaders
+15.1. Canvas Item Materials
+15.1.1. CanvasItemMaterial is important, mainly Blend mode
+15.1.2. Next Pass is to set up a chain
+15.2. Spatial Materials
+15.2.1. SpatialMateiral is using PBR
+15.2.2. Parameters need tweaking
+15.3. Shader Basics
+15.3.1. Shader Language is like GLSL
+15.3.2. first line must be shader type, shader_type spatial/canvas_item/particles
+15.3.3. vertex / fragment / light is function names
+15.3.4. Uniforms is needed
+15.3.5. VERTEX, TIME, ALBEDO, DIFFUSE_LIGHT, ALBEDO, ATTENUATION is key variables for shader
+15.3.6. render_mode is optional, cull_disabled, diffuse_toon is useful
+16. Lights and Shadows
+16.1. Light Sources
+16.1.1. Directional Light
+16.1.2. Omni Light(point)
+16.1.3. Spot Light
+16.1.4. Ambient and Sky Light(Environment)
+16.1.5. Emissive Materials
+16.1.6. GIProbe node is useful
+16.2. Shadows
+16.2.1. Directional Light Shadow
+16.2.2. Omni Light Shadows
+16.2.2.1. Dual-Paraboloid Shadow Mapping(DPSM)
+16.2.3. Ambient Occlusion
+16.2.3.1. Screen Space Ambient Occlusion(SSAO)
+16.2.3.2. occlusion texture
+16.2.4. Shadow in 2D
+16.2.4.1. LightOccluder2D, Light2D, OccluderPolygon2D is useful
+17. Game 2: Bloxorz Clone
+17.1. GridMap, like TileMap in 3D
+17.2. MeshLibrary, like TileSet in 3D
+17.3. Position3D node is useful
+18. Environments
+18.1. World Environment
+18.1.1. if no Environment node, Godot use a default one
+18.1.1.1. Project Setting > Rendering > Environment to setup default Environment
+18.1.2. Environment under Camera node override other Environment when camera is active
+18.1.3. Sky
+18.1.3.1. ProcedualSky
+18.1.3.2. PanoramaSky
+18.1.4. Ambient Light
+18.1.5. Fog
+18.1.6. Glow and Auto-Exposure
+18.1.7. Screen Space Effects
+18.1.7.1. SSAO
+18.1.7.2. Screen Space Reflection
+18.1.8. DoF, far and near
+18.1.9. Adjustments
+18.1.10. Tone Mapping
+18.2. Global Illumination
+18.2.1. GIProbe node is useful
+18.2.2. Bake button on the tool bar is useful
+18.3. ReflectionProbe
+19. Sound
+19.1. Playing Sounds
+19.1.1. wav and ogg format is supported
+19.1.2. AudioStreamPlayer2D and 3D is for positional audio
+19.1.3. Listener to fetch positional audio, Current property is useful
+19.2. Audio Buses
+19.2.1. Master bus is the kernal
+19.2.2. Multibus is supported
+20. Particle System(Skip)
+21. Viewports and Canvas
+22. Networking
+23. Game 3: Networked Bomberman Clone
+24. Exporting the Project
+25. Native Code
