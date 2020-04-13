@@ -112,6 +112,414 @@ common base type of all class types; a class, not a specific one
         }
         static public function main() {}
     }
+#### Enum Instance : 
+    enum Color {
+        Red;
+        Green;
+        Blue;
+        Rgb(r:Int, g:Int, b:Int);
+    }
+    var a = Red;
+    var b = Green;
+    var c = Rgb(255, 255, 0);
+    var ec:EnumValue = Red; // valid
+    var en:Enum<Color> = Color; // valid
+    
+    var color = getColor();
+    switch(color) {
+        case Red:
+            trace("Color was red");
+        case Green:
+            trace("Color was green");
+        case Blue:
+            trace("Color was blue");
+        case Rgb(r, g, b):
+            trace("Color had a red value of " + r);
+    }
+#### 
+- **Enum\<T\>**  
+common bse type of all enum types.
+#### Anonymous Structure  
+    class Main {
+        static public function main() {
+            var myStructure = {x:12, name:"floo"};
+            var user = {
+                name : "Nicolas",
+                age : 32,
+                pos : [
+                    {x : 0, y : 0},
+                    {x : 1, y : -1}
+                ],
+            };
+            user.name;
+            user.age = 33;
+        }
+    }
+
+    typedef Point = {x : Int, Y : Int}
+    class Path {
+        var start : Point;
+        var target : Point;
+        var current : Point;
+    }
+
+    typedef Point3 = { > Point, z : Int} // Extension(Inherit)
+#### JSON for structure values
+    var point = {"x" : 1, "y" : -5}; // key can be String  
+#### Class Notation for Structure Types
+    typedef Point = { // define a Struct
+        var x : Int;
+        var y : Int;
+    }
+#### Optional Fields
+    typedef User = {
+        age : Int,
+        name : String,
+        ?phoneNumber : String
+    }
+    typedef User = {
+        var age : Int,
+        var name : String;
+        @:optional var phoneNumber : String; // declare with annotation
+    }
+    typedef User = {
+        var age : Int,
+        var name : String;
+        var ?optional var phoneNumber : String;
+    }
+#### Impact on Performance  
+- dynamic targets  
+no impact
+- static targets  
+has impact
+#### Extensions
+    typedef IterableWithLength<T> = {
+        > Iterable<T>,
+        var length(default, null):Int;
+    }
+    class Main {
+        static public function main() {
+            var array = [1, 2, 3];
+            var t:IterableWithLength<Int> = array;
+        }
+    }
+
+    // since Haxe 3.1.0 : multiple structures extension
+    typedef WithLength = {
+        var length(default, null) :Int;
+    }
+
+    typedef IterableWithLengthAndPush<T> = {
+        > Iterable<T>,
+        > WithLength,
+        function push(a:T):Int;
+    }
+
+    // since Haxe 4.0.0 : &
+    typedef Point2D = {
+        var x : Int;
+        var y : Int;
+    }
+    typedef Point3D = Point2D & {z : Int};
+    class Main {
+        static public function main() {
+            var point:Point3D = {x : 5, y : 3, z : 1};
+        }
+    }
+### Function Type  
+"$type" : output the type its expression has during **compilation**  
+### 
+    class Main {
+        static public function main() {
+            // (i : Int, s : String) -> Bool
+            $type(test);
+            $type(test(1, "fool")); // Bool
+            // (?i : Int, ?s : String) -> String
+            $type(test_opt);
+        }
+
+        static function test(i:Int, s:String):Bool {
+            return true;
+        }
+        static function test_opt(?i:Int, ?s:String) {
+            return "i: " + i + ", s: " + s;
+        }
+    }
+### Dynamic  
+can be assigned to anything and anything can be assigned to it.  
+Drawbacks :  
+- compile without type checking
+- some optimization disabled
+- compile error -> runtime error
+- Dead Code Elimiation disabled
+### 
+    class Main {
+        static function main() {
+            var jsonData = '[1, 2, 3]';
+            var json = haxe.Json.parse(jsonData);
+            $type(json); // Unknown<0>
+            for (i in 0...json.length) {
+                // Array access is not allowed on
+                // {+ length : Int}
+                trace(json[0]);
+            }
+        }
+    }
+#### Dynamic with Type Parameter  
+    var att : Dynamic<String> = xml.attributes;
+    // valid, value is a String
+    att.name = "Nicolas";
+    // dito (this documentation is quite old)
+    att.age = "26";
+    // error, value is not a String
+    att.income = 0;
+#### DynamicAccess
+    class Main {
+        static public function main() {
+            var user : haxe.DynamicAccess<Dynamic> = {};
+
+            // Sets values for specified keys.
+            user.set("name", "Mark");
+            user.set("age", 25);
+
+            // Returns values by specified keys.
+            trace(user.get("name")); // "Mark"
+            trace(user.get("age")); // 25
+
+            // Tells if the structure contains a specified key
+            trace(user.exists("name")); // true
+        }
+    }
+#### Any
+    abstract Any(Dynamic) from Dyanmic to Dynamic {}
+### 
+    class Main {
+        static function setAnyValue(value:Any) {
+            trace(value);
+        }
+        static function getAnyValue():Any {
+            return 42;
+        }
+        static function main() {
+            // value of any type works;
+            setAnyValue("someValue");
+            setAnyValue(42);
+
+            var value = getAnyValue();
+            $type(value); // Any, not Unknown<0>
+
+            // won't compile : no dynamic field access
+            // value.charCodeAt(0);
+
+            if (Std.is(value, String)) {
+                // explicit promotion, type-safe
+                trace((value : String).charCodeAt(0));
+            }
+        }
+    }
+### Abstract  
+An abstract type is a type which is actually a different type at run-time. It is a **compile-time feature** which defines types "over" concrete types in order to modify or augment their behavior:  
+### 
+    abstract AbstractInt(Int) {
+        inline public function new(i:Int) {
+            this = i;
+        }
+    }
+### 
+- "abstract" denotes abstract type
+- AbstractInt is the name of the abstract type
+- Int is **Underlying type**
+- fields enclosed in {}
+- new function access one argument i of type Int
+- **Underlying Type** is the type which is used to represent said abstract at runtime, It is usually a concrete(non-abstract) type but could be another abstract type as well.
+### 
+    class Main {
+        static public function main() {
+            var a = new AbstractInt(12);
+            trace(a); // 12
+        }
+    }
+
+    // -> haxe -- main MyAbstract --js myabstract.js
+    var a = 12;
+    console.log(a);
+#### Implicit Casts
+- Direct : adding "to" and "from" rules
+- Class field : using "@:to" and "@:from" metadata
+### 
+Direct code : 
+### 
+    abstract MyAbstract(Int) from Int to Int {
+        inline function new(i:Int) {
+            this = i;
+        }
+    }
+    class Main{
+        static public function main() {
+            var a : MyAbstract = 12;
+            var b : Int = a;
+        }
+    }
+### 
+Class field casts have the same semantics, but are defined completely differently:
+### 
+    abstract MyAbstract(Int) {
+        inline function new(i:Int) {
+            this = i;
+        }
+        @:from
+        static public function fromString(s:String) {
+            return new MyAbstract(Std.parseInt(s));
+        }
+        @:to
+        public function toArray() {
+            return [this];
+        }
+    }
+
+    class Main {
+        static public function main() {
+            var a:MyAbstract = "3";
+            var b:Array<Int> = a;
+            trace(b); // [3]
+        }
+    }
+### 
+The **selection algorithm** when assigning a type A to type B where at least one is an abstract is simple:  
+1. if A is not an abstract, go to 3.
+2. if A defines a to-conversion that admits B, go to 6.
+3. if B is not an abstract, go to 5.
+4. if B defines a from-conversion that admits A, go to 6.
+5. Stop, unification fails.
+6. Stop, unification succeeds.
+### 
+    abstract A(Int) {
+        public function new()
+            this = 0;
+        
+        @:to public function toB() return new B();
+    }
+
+    abstract B(Int) {
+        public function new()
+            this = 0;
+        
+        @:to public function toC() return new C();
+    }
+
+    abstract C(Int) {
+        public function new()
+            this = 0;
+    }
+
+    class Main {
+        static public function main() {
+            var a = new A();
+            var b:B = a; // valid, used A.toB
+            var c:C = b; // valid, used B.toC
+            var c:C = a; // error, A should be C
+        }
+    }
+#### Operator Overloading
+    abstract MyAbstract(String) {
+        public inline function new(s:String) {
+            this = s;
+        }
+
+        @:op(A * B)
+        public function repeat(rhs:Int):MyAbstract {
+            var s:StringBuf = new StringBuf();
+            for (i in 0...rhs)
+                s.add(this)
+            return new MyAbstract(s.toString());
+        }
+    }
+
+    class Main {
+        static public function main() {
+            var a = new MyAbstract("foo");
+            trace(a * 3); // foofoofoo
+        }
+    }
+    // [] and a.b can be override since Haxe 4.0.0
+#### Array Access
+- if an @:arrayAccess method accepts one argument, it is a getter.
+- if an @:arrayAccess method accepts two argument, it is a setter.
+### 
+    class Main {
+        public static function main() {
+            var map = new Map();
+            map["foo"] = 1;
+            tract(map["foo"]);
+        }
+    }
+### 
+    // since Haxe 3.2, fields are new consistently checked from top to bottom
+    abstract AString(String) {
+        public function new(s)
+            this = s;
+        
+        @:arrayAccess function getInt1(k:Int) {
+            return this.charAt(k);
+        }
+        @:arrayAccess function getInt2(k:Int) {
+            return this.charAt(k).toUpperCase();
+        }
+    }
+    class Main {
+        static function main() {
+            var a = new AString("foo");
+            trace(a[0]);
+        }
+    }
+#### Enum abstracts
+    @:enum
+    abstract HttpStatus(Int) {
+        var NotFound = 404;
+        var MethodNotAllowed = 405;
+    }
+
+    class Main {
+        static public function main() {
+            var status = HttpStatus.NotFound;
+            var msg = printStatus(status);
+        }
+
+        static function printStatus(status:HttpStatus) {
+            return switch(status) {
+                case NotFound:
+                    "Not found";
+                case MethodNotAllowed:
+                    "Method not allowed";
+            }
+        }
+    }
+    // since Haxe 4.0.0, @:enum abstract -> enum abstract
+#### Forwarding abstract fields
+    // to "keep" parts of its functionality.
+    @:forward(push, pop)
+    abstract MyArray<S>(Array<S>) {
+        public inline function new() {
+            this = [];
+        }
+    }
+    class Main {
+        static public function main() {
+            var myArray = new MyArray();
+            myArray.push(12);
+            myArray.pop();
+            // MyArray<Int> has no field length
+            // myArray.length;
+        }
+    }
+#### Core-type abstracts  
+using @:coreType;  
+- have no underlying type;
+- considered nullable unless annotated with @:notNull;
+- allowed to declare array access functions without expressions;
+- Operator overloading fields that have no expression are not forced to adhere to the Haxe type semantics.
+### Monomorph  
+morph into a different type later. type inference function  
 
 ## TypeSystem  
 ## Class Fields  
