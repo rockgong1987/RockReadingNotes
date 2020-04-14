@@ -597,7 +597,108 @@ morph into a different type later. type inference function
     }
 #### Unification
 - Unification
-    - Unification between two types A and B is a directional process which answers one question : whether A **can be assigned** to B. It may mutate either type if it either is or has a monomorph.
+    - Unification between two types A and B is a directional process which answers one question : whether A **can be assigned** to B. It may mutate either type if it either is or has a monomorph
+- Structural Subtyping
+#### Type Inference
+    class Main {
+        public static function main() {
+            var x = null;
+            $type(x); // Unknown<0>
+            x = "foo";
+            $type(x); // String
+
+            var y = [];
+            $type(y); // Array<Unknown<0>>
+            y.push("foo");
+            $type(y); // Array<String>
+        }
+    }
+#### Top-down Inference
+- Expected Type
+### 
+    import haxe.Constraints;
+    class Main {
+        static public function main() {
+            var s:String = make();
+            var t:haxe.Template = make();
+        }
+
+        @:generic
+        static function make<T:Constructible<String->Void>():T {
+            return new T("foo");
+        }
+    }
+### Modules and Paths
+- Module
+  - All Haxe is organized in modules, which are addressed using paths. In essence, each .hx file represents a module which may contain several types. A type may be private, in which case only its containing module can access it.
+- for **haxe.ds.StringMap.StringMap\<Int\>**
+  - the package haxe.ds
+  - the module name StringMap
+  - the type name StringMap
+  - the type parameter Int
+  - If the module and type name are equal(haxe.ds.StringMap\<Int\> for short)
+- Type path
+  - general form : pack1.pack2.packN.ModuleName.TypeName
+#### Module Sub-Types
+- module sub-type is type declared in a module with a different name than that module
+### 
+    // a/A.hx
+    package a;
+    class A {public function() {} }
+    // sub-type
+    class B {public function() {} }
+### 
+    // Main.hx
+    import a.A
+    class Main {
+        static function main() {
+            var subtype1 = new a.A.B();
+            // these is also valid, but require imort a.A or import a.A.B :
+            var subtype2 = new B();
+            var subtype3 = new a.B();
+        }
+    }
+### 
+- private type can only be directly accessed from within the module it is defined in.
+#### Import
+- use import to shorten code
+### 
+    import haxe.ds.StringMap;
+    class Main {
+        static public function main() {
+            // instead of : new haxe.ds.StringMap();
+            new StringMap();
+        }
+    }
+    import Math.random; // import static fields of a class and use them unqualified
+    class Main {
+        static public function main() {
+            random();
+        }
+    }
+    import haxe.macro.*; // wildcard import
+    class Main {
+        static function main() {
+            var expr:Expr = null;
+            // var expr:ExprDef = null; // Class not found : ExprDef
+        }
+    }
+    import String.fromCharCode in f; // import with alias; 'as' can be used instead of 'in' since Haxe 3.2.0
+    class Main {
+        static function main() {
+            var c1 = f(65);
+            var c2 = f(66);
+            trace(c1 + c2); // AB
+        }
+    }
+#### import defaults/import.hx
+- since Haxe 3.3.0, import.hx can be used
+  - import.hx is a specified name
+  - must be placed in the same directory as your code
+  - can only contain import and using statements
+#### Resolution Order
+### untyped
+- should be avoid, until absolutely necessary
 ## Class Fields  
 ## Expressions  
 ## Language Features  
