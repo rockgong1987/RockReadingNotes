@@ -522,6 +522,82 @@ using @:coreType;
 morph into a different type later. type inference function  
 
 ## TypeSystem  
+### Typedef
+    typedef IA = Array<Int>;
+    typedef User = {
+        var age : Int;
+        var name : String;
+    }
+    typedef Iterable<T> = {
+        function iterator() : Iterator<T>;
+    }
+### Type Parameters
+    class Main {
+        static public function main() {
+            equals(1, 1);
+            // runtime message : bar should be foo
+            equals("foo", "bar");
+            // compiler error : String should be Int
+            equals(1, "foo");
+        }
+        static function equals<T>(expected:T, actual:T) {
+            if (actual != expected) {
+                trace('$actual should be $expected');
+            }
+        }
+    }
+#### Constraints
+    typedef Measureable = {
+        public var length(default, null) : Int;
+    }
+    class Main {
+        static public function main() {
+            trace(test([]));
+            trace(test(["bar", "foo"]));
+            // String should be Iterable<String>
+            // test("foo");
+        }
+        #if (haxe_ver >= 4)
+        static function test<T:Iterable<String> & Measurable>(a:T) {
+        #else
+        static function test<T:(Iterable<String, Meashureable>)> {
+        #end
+            if (a.length == 0)
+                return "empty";
+            return a.iterator().next();
+        }
+    }
+### Generic
+#### Construction of generic type parameter
+    import haxe.Contraints;
+    class Main {
+        static public function main() {
+            var s:String = make();
+            var t:haxe.Template = make();
+        }
+        @:generic
+        static function make<T:Constructible<String->Void>>():T {
+            return new T("foo");
+        }
+    }
+#### Variance
+    class Base {
+        public function new() {}
+    }
+    class Child extends Base {}
+    class Main {
+        public static function main() {
+            var children = [new Child()];
+            // Array<Child> should be Array<Base>
+            // Type paremeters are invariant
+            // Child should be Base
+            var bases:Array<Base> = children;
+            // Covariance and Contravariance is just normal
+        }
+    }
+#### Unification
+- Unification
+    - Unification between two types A and B is a directional process which answers one question : whether A **can be assigned** to B. It may mutate either type if it either is or has a monomorph.
 ## Class Fields  
 ## Expressions  
 ## Language Features  
