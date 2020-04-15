@@ -816,6 +816,86 @@ class Main {
 <li>should be avoid, until absolutely necessary</li>
 </ul>
 <h2 id="class-fields">Class Fields</h2>
+<h3 id="variable">Variable</h3>
+<h3 id="property">Property</h3>
+<pre><code>class Main {
+    public var x(default, null):Int; // first identifier (default) is for read, second identifier is for write
+}
+</code></pre>
+<h3 id="-23"></h3>
+<pre><code>class Main {
+    // read from outside, write only within Main
+    public var ro(default, null):Int;
+
+    // write from outside, read only within Main
+    public var wo(null, default):Int;
+
+    // access through getter get_x and setter set_x
+    public var x(get, set):Int;
+
+    // read access through getter, no write access
+    public var y(get, never):Int;
+
+    // requried by field x
+    function get_x() return 1;
+
+    // requried by field x
+    function set_x(x) return x;
+
+    // requried by field y
+    function get_y() return 1;
+
+    function new() {
+        var v = x;
+        x = 2;
+        x += 1;
+    }
+}
+</code></pre>
+<h3 id="method">Method</h3>
+<h4 id="override-method">override method</h4>
+<pre><code>class Base {
+    public function new() {}
+
+    public function myMethod() {
+        return &quot;Base&quot;;
+    }
+}
+class Child extends Base {
+    public override function myMethod() {
+        return &quot;Child&quot;;
+    }
+}
+class Main {
+    static public function main() {
+        var child:Base = new Child();
+        trace(child.myMethod()); // Child
+    }
+}
+</code></pre>
+<h3 id="access-modifier">Access Modifier</h3>
+<ul>
+<li>dynamic : support re-bind</li>
+</ul>
+<h3 id="-24"></h3>
+<pre><code>class Main {
+    static dynamic function test() {
+        return &quot;original&quot;;
+    }
+
+    static public function main() {
+        trace(test());
+        test = function() {
+            return &quot;new&quot;;
+        }
+        trace(test());
+    }
+}
+</code></pre>
+<h3 id="-25"></h3>
+<ul>
+<li>extern : The extern keyword causes the compiler to not generate the field in the output. This can be used in combination with the inline keyword to force a field to be inlined (or cause an error if this is not possible). Forcing inline may be desirable in abstracts or extern classes.</li>
+</ul>
 <h2 id="expressions">Expressions</h2>
 <h2 id="language-features">Language Features</h2>
 <h2 id="compiler-usage">Compiler Usage</h2>
