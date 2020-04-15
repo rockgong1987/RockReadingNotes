@@ -700,6 +700,78 @@ morph into a different type later. type inference function
 ### untyped
 - should be avoid, until absolutely necessary
 ## Class Fields  
+### Variable
+### Property
+    class Main {
+        public var x(default, null):Int; // first identifier (default) is for read, second identifier is for write
+    }
+###
+    class Main {
+        // read from outside, write only within Main
+        public var ro(default, null):Int;
+
+        // write from outside, read only within Main
+        public var wo(null, default):Int;
+
+        // access through getter get_x and setter set_x
+        public var x(get, set):Int;
+
+        // read access through getter, no write access
+        public var y(get, never):Int;
+
+        // requried by field x
+        function get_x() return 1;
+
+        // requried by field x
+        function set_x(x) return x;
+
+        // requried by field y
+        function get_y() return 1;
+
+        function new() {
+            var v = x;
+            x = 2;
+            x += 1;
+        }
+    }
+### Method
+#### override method
+    class Base {
+        public function new() {}
+
+        public function myMethod() {
+            return "Base";
+        }
+    }
+    class Child extends Base {
+        public override function myMethod() {
+            return "Child";
+        }
+    }
+    class Main {
+        static public function main() {
+            var child:Base = new Child();
+            trace(child.myMethod()); // Child
+        }
+    }
+### Access Modifier
+- dynamic : support re-bind
+### 
+    class Main {
+        static dynamic function test() {
+            return "original";
+        }
+
+        static public function main() {
+            trace(test());
+            test = function() {
+                return "new";
+            }
+            trace(test());
+        }
+    }
+### 
+- extern : The extern keyword causes the compiler to not generate the field in the output. This can be used in combination with the inline keyword to force a field to be inlined (or cause an error if this is not possible). Forcing inline may be desirable in abstracts or extern classes.
 ## Expressions  
 ## Language Features  
 ## Compiler Usage  
