@@ -772,7 +772,15 @@ morph into a different type later. type inference function
     }
 ### 
 - extern : The extern keyword causes the compiler to not generate the field in the output. This can be used in combination with the inline keyword to force a field to be inlined (or cause an error if this is not possible). Forcing inline may be desirable in abstracts or extern classes.
-## Expressions  
+## Expressions
+### Blocks
+- support variable shadowing
+### Literals
+- Map : {"a" => 2}
+### var and final
+- final : readonly
+### Local function
+- since 4.0.0 : arrow function (a:Int, b:Int) -> a + b
 ## Language Features  
 ## Compiler Usage  
 ## Macros  
