@@ -781,9 +781,180 @@ morph into a different type later. type inference function
 - final : readonly
 ### Local function
 - since 4.0.0 : arrow function (a:Int, b:Int) -> a + b
+### new  
+### for  
+- for (v in list)
+- for (i in 0...10)
+- for (k => v in e1) // since Haxe 4.0.0
+### while
+### do-while
+### switch
+    switch subject {
+        case pattern1: exp;
+        case pattern2: exp;
+        default: exp;
+    }
+### throw
+- can be caught by catch block
+- haxe.Callstack.exceptionStack() is useful
+### try/catch
+    try try-expr
+    catch (varName1:Type1) catch-expr-1
+    catch (varName2:Type2) catch-expr-2
+### return
+### break
+### continue
+### cast
+#### unsafe cast
+- cast to monomorph
+### 
+    class Main {
+        public static function main() {
+            var i = 1;
+            $type(i); // Int
+            var s = cast i;
+            $type(s); // unknown<0>
+            Std.parseInt(s);
+            $type(s); // String
+        }
+    }
+#### safe cast
+    class Base {
+        public function new() {}
+    }
+    class Child1 extends Base {}
+    class Child2 extends Base {}
+    class Main {
+        public static function main() {
+            var child1:Base = new Child1();
+            var child2:Base = new Child2();
+            cast(child1, Base); // OK
+            cast(child1, Child2); // Exception : Class cast error
+        }
+    }
+### inline
 ## Language Features  
-## Compiler Usage  
+### Conditional Complilation
+- Compiler Flag
+  - -D key=value or -D key
+### Externs
+- Externs can be used to describe target-specific interaction in a type-safe manner.
+- like normal classes, except that
+  - the class keyword is preceded by the extern keyword
+  - methods have no expressions
+  - all argument and return types are explicit, and
+  - the default visibility is public
+#### Native Metadata
+- With @:native("final") var final_:Int;
+#### Implementing Dynamic
+### Static Externsion
+- allows pseudo-extensing existing types without modifying their source
+## Compiler Usage 
+## Complier Features 
 ## Macros  
+- The role of macros during compliation
+- ![](img/3.png)
+- a basic macro is a syntax-transformation, it receives zero or more expressions and also returns an exporession
+- different kinds of macros, run at specific complication stages
+  - Initialization Macros
+    - provided by command line using the --macro compiler parameter
+    - executed after the compiler arguments were processed and the **typer context** has been created, before any typing was done
+  - Build Macros
+    - defined for classes, enums and abstracts through the @:build or @autoBuild metadata
+    - executed after the type has been set up (including its relation to other types, such as inheritance for classes), before its fields are typed
+  - Expression Macros
+    - executed as soon as they are typed
+#### Macro Context
+- environment in which the macro is executed, depending on the macro type
+- obtained through the haxe.macro.Context
+- different contextual information can be accessed, depending on the macro type
+- Initialization macros
+  - Context.getLocal*() return null
+- Build macros
+  - has return value from context.getBuildFields()
+  - has local type, but no local method, so Context.getLocalMethod() returns null
+#### Arguments
+    import haxe.macro.Expr;
+    class Main {
+        static public function main() {
+            var x = 0;
+            var b = add(x++);
+            trace(x); // 2
+        }
+        macro static function add(e:Expr) {
+            return macro $e + $e;
+        }
+    }
+##### ExprOf
+- type limited Expr, Expr\<T\>
+##### Constant Expressions
+    class Main {
+        static public function main() {
+            const("foo", 1, 1.5, true);
+        }
+
+        macro static function const(s:String, i:Int, f:Float, b:Bool) {
+            trace(s);
+            trace(i);
+            trace(f);
+            trace(b);
+            return macro null;
+        }
+    }
+##### Rest Argument
+    // final argument of a macro is of type Array<Expr>
+    import haxe.macro.Expr;
+    class Main {
+        static public function main() {
+            myMacro("foo", a, b, c);
+        }
+        macro static functino myMacro(e1:Expr, extra:Array<Expr>) {
+            for (e in extra) {
+                trace(e);
+            }
+            return macro null;
+        }
+    }
+#### Reification
+- syntax : _macro expr_, where _expr_ is any valid Haxe expression
+##### Expression Reification
+- ${} and $e{} : Expr -> Expr
+- $a{} : Array\<Expr\> -> Array\<Expr\>
+- $b{} : Array\<Expr\> -> Expr
+- $i{} : String -> Expr
+- $p{} : Array\<String\> -> Expr
+- $v{} : Dynamic -> Expr
+##### Type Reification
+- syntax : _macro : Type_, where _Type_ can be any valid type path expression
+    - TPath : macro : pack.Type
+    - TFunction : macro : Arg1 -> Arg2 -> Return
+    - TAnonymous : macro : { field: Type}
+    - TParent : macro : (Type)
+    - TExtend : macro : {> Type, field : Type }
+    - TOptional : macro : ?Type
+##### Class Reification
+- to obtain an instance of haxe.macro.Expr.TypeDefinition
+- syntax : _macro class_
+### 
+    class Main {
+        macro static function generateClass(funcName:String) {
+            var c = macro class MyClass {
+                public function new() {}
+                public function $funcName() {
+                    trace($v{funcName} + " was called");
+                }
+            }
+            haxe.macro.Context.defineType(c);
+            return macro new MyClass();
+        }
+
+        public static function main() {
+            var c = generateClass("myFunc");
+            c.myFunc();
+        }
+    }
+#### Tools
+- using haxe.macro.Tools
 ## Standard Library  
 ## Haxelib  
 ## Target Details  
