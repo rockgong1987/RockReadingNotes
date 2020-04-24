@@ -850,6 +850,32 @@ morph into a different type later. type inference function
 ### Static Externsion
 - allows pseudo-extensing existing types without modifying their source
 ## Compiler Usage 
+- Common arguments
+  - Input:
+    - -p \<path\> or --class-path\<path\> add a class path where .hx source files or packages(sub-directories) can be found
+    - -L \<library-name\> add a Haxelib library.default recent version, to require a specific version, use -L library_name:version
+    - -m \<dot_path\> main class
+    - -D key or -D key=value : conditional compilation flag
+  - Output:
+    - --js file_name.js, generate JavaScript source code in specified file
+    - --swf
+    - --neko
+    - --php
+    - --cpp
+    - --cs
+    - --java
+    - --python
+    - --lua
+    - --hl
+    - --cppia
+    - --x \<file\>
+    - --no-output : compile but do not generate any file
+    - --interp : interpret the program using internal macro system
+  - Other global arguments
+    - --run \<module\> [args...] compile and execute a Haxe module with command line arguments
+    - --xml \<file\> generate XML types descript. useful for API documentation generation tools like Dox.
+    - -v verbose
+    - --dce \<std|full|no\> : dead code elimination mode (default std)
 ## Complier Features 
 ## Macros  
 - The role of macros during compliation
