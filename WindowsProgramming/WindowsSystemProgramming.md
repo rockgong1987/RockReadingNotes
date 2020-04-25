@@ -1,0 +1,15 @@
+# Windows System Programming
+- Getting Started with Windows
+    - Operating System Essentials
+        - Memory
+            - virtual memory address space
+            - physical memory
+            - disk and other secondary storage
+        - File systems
+        - Processors
+        - Resource naming and location
+        - Multitasking
+        - Communication and synchronization
+        - Security and protection
+    - Windows Evolution
+        - 
