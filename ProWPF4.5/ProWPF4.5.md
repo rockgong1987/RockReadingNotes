@@ -47,3 +47,24 @@ using _device-independent units_. A single device-independent unit is defined as
 - **System.Windows.Controls.ContentControl**
 - **System.Windows.Controls.ItemsControl** : ListBox, TreeView
 - **System.Windows.Control.Panel**
+### WPF 4.5
+#### The WPF Toolkit
+#### Visual Studio 2012
+## Chaper 2 - XAML
+XAML documents define the arrangement of panels, buttons, and controls that make up the windows in a WPF application.
+### Understanding XAML
+#### Graphical User Interfaces Before WPF
+- XAML opens up worlds of possibilites for collaboration, because other design tools understand the XAML format(for example, Microsoft Expression Design)
+#### The Variants of XAML
+- XAML is and all-purpose XML-based syntax for representing a tree of .NET objects
+- Subsets of XAML
+    - WPF XAML
+    - XPS XAML part of WPF XAML, defines XML representation for formatted electronic documents(XML Paper Specification)
+    - Silverlight XAML, subset of WPF XAML
+    - WF XAML, Workflow foundation
+#### XAML Compilation
+- XAML Compiles to BAML(Binary representation of XAML)
+### XAML Basics
+- every element in a XAML document maps to an instance of a .NET class.
+- you can nest one element inside another.
+- you can set the properties of each class through attributes
