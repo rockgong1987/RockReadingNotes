@@ -68,3 +68,24 @@ XAML documents define the arrangement of panels, buttons, and controls that make
 - every element in a XAML document maps to an instance of a .NET class.
 - you can nest one element inside another.
 - you can set the properties of each class through attributes
+- Three can be the top : 
+    - Window
+    - Page
+    - Application
+#### XAML Namespace
+- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    - encompasses all the WPF classes
+- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    - XAML utility features, prefix x : ElementName
+- they **don't** point to a location on the Web
+#### The Code-Behind Class
+- <Window x:Class="WindowsApplication1.Window1"
+    - x namespace prefix places the class attribute in XAML namespace
+    - tells the XAML parser to generate a new class with the specified name, which derives from the class that's named by the XML element.
+    - in this case, Window1 is created, derives from the base Window class.
+#### The InitializeComponent() Method
+- if you add another constructor to your window class, make sure InitializeComponent is called.
+#### Naming Elements
+- x:Name is field name in generated code
+- Name is the Name property of the field
+### Properties and Events in XAML
