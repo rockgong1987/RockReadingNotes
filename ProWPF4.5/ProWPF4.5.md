@@ -89,3 +89,86 @@ XAML documents define the arrangement of panels, buttons, and controls that make
 - x:Name is field name in generated code
 - Name is the Name property of the field
 ### Properties and Events in XAML
+- The XAML parser follows two steps to find a type converter
+    - examines the property declaration
+    - checks the class declaration of corresponding data type
+- Complex Properties
+```xml
+<Grid Name="grid1">
+  <Grid.Background>
+    <LinearGrandientBrush>
+      <LinearGradientBrush.GradientStops>
+        <GradientStop Offset="0.00" Color="Red" />
+        <GradientStop Offset="0.50" Color="Indigo" />
+        <GradientStop Offset="1.00" Color="Violet" />
+      </LinearGradientBrush.GradientStops>
+    </LinearGrandientBrush>
+  </Grid.Background>
+</Grid>
+```
+- Markpu Extensions
+```xml
+<Button ... Foreground="{x:Static SystemColors.ActiveCaptionBrush}">
+```
+- Attached Properties
+```xml
+<Text Box ... Grid.Row="0"> // txtQuestion.SetValue(Grid.RowProperty, 0);
+  [Place question here]
+</Text>
+<Button ... Grid.Row="1">
+  Ask the Eight Ball
+</Button>
+<TextBox ... Grid.Row="2">
+  [Answer will ppear here.]
+</TextBox>
+```
+- Nesting Elements
+    - If the parent implements IList, the parser calls IList.Add() and passes in child
+    - If the parent implements IDictionary, the parser calls IDictionary.Add()
+    - if the parent is decorated with the ContentProperty
+- Special Characters and Whitespace
+    - Less than(<) &lt;
+    - Greater than(>) &gt;
+    - Ampersand(&) &amp;
+    - Quotation mark(") &quot;
+- Events
+```xml
+<Button ... Click="cmdAnswer_Click">
+```
+```cs
+private void cmdAnswer_Click(object sender, RoutedEventArts e)
+{
+    this.Cursor = Cursors.Wait;
+    // Dramatic delay...
+    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
+    AnswerGenerator generator = new AnswerGenerator();
+    txtAnswer.Text = generator.GetRandomAnswer(txtQuestion.Text);
+    this.Cursor = null;
+}
+```
+### Using Types from Other Namespaces
+```xml
+<Window x:Class="WindowsApplication1.Window1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  Width="300" Height="300"
+  >
+  <ListBox>
+    <ListBoxItem>
+      <sys:DateTime>10/13/2013 4:30 PM</sys:DateTime>
+    </ListBoxItem>
+    <ListBoxItem>
+      <sys:DateTime>10/29/2013 12:30 PM</sys:DateTime>
+    </ListBoxItem>
+    <ListBoxItem>
+      <sys:DateTime>10/30/2013 2:30 PM</sys:DateTime>
+    </ListBoxItem>
+  </ListBox>
+</Window>
+```
+### Loading and Compiling XAML
+- three distinct coding styles that you can use to create a WPF application:
+    - Code-only : trditional Windows Forms Approach
+    - Code and uncompiled markup(XAML)
+    - Code and compiled markup(BAML)
