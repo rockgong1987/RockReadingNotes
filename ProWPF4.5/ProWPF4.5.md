@@ -172,3 +172,211 @@ private void cmdAnswer_Click(object sender, RoutedEventArts e)
     - Code-only : trditional Windows Forms Approach
     - Code and uncompiled markup(XAML)
     - Code and compiled markup(BAML)
+#### Code-Only
+```cs
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+
+public class Window1 : Window {
+  private Button button1;
+
+  public Window1() {
+    InitializeComponent();
+  }
+
+  private void InitializeComponent() {
+    // Configure the form.
+    this.Width = this.Height = 285;
+    this.Left = this.Top = 100;
+    this.Title = "Code-Only Window";
+
+    // Create a container to hold a button
+    DockPanel panel = new DockPanel();
+
+    // Create the button
+    button1 = new Button();
+    button1.Content = "Please click me";
+    button1.Margin = new Thickness(30);
+
+    // Attach the event handler
+    button1.Click += button1_Click;
+
+    // Place the button in the panel.
+    IAddChild container = panel;
+    container.AddChild(button1);
+
+    // Place the panel in the form
+    container = this;
+    container.AddChild(panel);
+  }
+
+  private void button1_Click(object sender, RoutedEventArgs e) {
+    button1.Content = "Thank you.";
+  }
+}
+```
+```cs
+public class Program : Application {
+  [STAThread()]
+  static void Main() {
+    Program app = new Program();
+    app.MainWindow = new Window1();
+    app.MainWindow.ShowDialog();
+  }
+}
+```
+#### Code and Uncompiled XAML
+```xml
+<DockPanel xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <Button Name="button1" Margin="30">Please click me.</Button>
+</DockPanel>
+```
+```cs
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+using System.IO;
+
+public class Window1 : Window {
+  private Button button1;
+
+  public Window1() {
+    InitializeComponent();
+  }
+  public Window1(string xamlFile) {
+    // Configure the form
+    this.Width = this.Height = 285;
+    this.Left = this.Top = 100;
+    this.Title = "Dynamically Loaded XAML";
+
+    // Get the XAML content from and external file
+    DependencyObject rootElement;
+    using (FileStream fs = new FileStream(xamlFile, FileMode.Open)) {
+      rootElement = (DependencyObject)XamlReader.Load(fs);
+    }
+
+    // Insert the markup into this window
+    this.Content = rootElement;
+
+    // Find the control with the appropriate name.
+    button1 = (Button)LogicalTreeHelper.FindLogicalNode(rootElement, "button1");
+    // equivalent approach:
+    // FrameworkElement frameworkElement = (FrameworkElement)rootElement;
+    // button1 = (Button)frameworkElement.FindName("button1");
+
+    // Wire up the event handler.
+    button1.Click += button1_Click;
+  }
+
+  private void button1_Click(object sender, RoutedEventArgs e) {
+    button1.Content = "Thank you.";
+  }
+}
+```
+#### Code and Compiled XAML
+- two files will be generated
+  - baml
+  - xxxx.g.cs(__g__ means __generated__), as a partial class
+#### XAML Only
+- loose XAML
+## Chapter 3 - Layout
+- In WPF, you shape layout by using different __containers__
+### Understanding Layout in WPF
+- Most applications will use weblike flow layouts
+#### The WPF Layout Philosophy
+- Window class is derive from ContentControl
+- ideal WPF window follows principles:
+  - Elements(such as controls) should not be explicitly sized
+  - Elements do not indicate their position with screen coordinates
+  - Layout containers "share" the available space among theirs children
+  - Layout containers can be nested
+#### The Layout Process
+- WPF layout takes place in two stages
+  - measure stage : containers loops through children and asks them to provide their preferred size
+  - arrange stage : places the child elements in the appropriate position
+- ScrollViewer : provide scroll support
+#### The Layout Containers
+- Public Properties of the Panel Class
+  - Background : brush used to paint the panel background
+  - Children
+  - IsItemsHost : true if the panel is being use to show the items that are associated with and ItemsControl
+- Core Layout Panels
+  - StackPanel
+    - horizontal or vertical stack
+  - WrapPanel
+    - wrapped lines
+  - DockPanel
+    - against an entire edge of the container
+  - Grid
+    - arrange according to and invisible table
+  - UniformGrid
+    - in table but forces all cells to have the same size
+  - Canvas
+    - position absolutely by using fixed coordinates
+  - Other Layout Panels
+    - TabPanel, ToolbarPanel, ToolbarOverflowPanel, VirtualizingStackPanel, InkCanvas...
+### Simple Layout with the StackPanel
+```xml
+<Window x:Class="Layout.SimpleStack"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="Layout" Height="223" Width="354">
+  <StackPanel>
+    <Label>A Button Stack</Label>
+    <Button>Button 1</Button>
+    <Button>Button 2</Button>
+    <Button>Button 3</Button>
+    <Button>Button 4</Button>
+  </StackPanel>
+</Window>
+```
+![](img/301.png)
+```xml
+<StackPanel Orientation="Horizontal">
+```
+![](img/302.png)
+#### Layout Properties
+- HorizontalAlignment : Center, Left, Right, Stretch
+- VerticalAlignment : Center, Top, Bottom, Stretch
+- Margin
+- MinWidth and MinHeight
+- MaxWidth and MaxHeight
+- Width and Height
+#### Alignment
+```xml
+<StackPanel>
+  <Label HorizontalAlignment="Center">A Button Stack</Label>
+  <Button HorizontalAlignment="Left">Button 1</Button>
+  <Button HorizontalAlignment="Right">Button 2</Button>
+  <Button>Button 3</Button>
+  <Button>Button 4</Button>
+</StackPanel>
+```
+![](img/303.png)
+#### Margin
+```xml
+<Button Margin="5">Button 3</Button> // cmd.Margin = new Thickness(5);
+<Button Margin="5,10,5,10">Button 3</Button> // left,top,right,bottom
+```
+#### Minimum, Maximum, and Explicit Sizes
+```xml
+<Window SizeToContent="WidthAndHeight"> // similar to UGUI ContentSizeFitter
+```
+#### The Border
+- Properties of the Border Class
+  - Background : Brush
+  - BorderBrush and BorderThickness
+  - CornerRadius
+  - Padding : between border and content(margin is outside)
+```xml
+<Border Margin="5" Padding="5" Background="LightYellow" BorderBrush="SteelBlue" BorderThickness="3,5,3,5" CornerRadius="3" VerticalAlignment="Top">
+  <StackPanel>
+    <Button Margin="3">One</Button>
+    <Button Margin="3">Two</Button>
+    <Button Margin="3">Three</Button>
+  </StackPanel>
+</Border>
+```
+![](img/304.png)
+### Wrap Panel and Dock Panel
