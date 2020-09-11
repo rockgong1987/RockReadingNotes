@@ -132,5 +132,18 @@
 8. Transformations
 8.1. use GLM to handle opengl math
 9. Coordinate Systems
+9.1. V_clip = M_projection * M_view * M_model * V_local
+9.8. Z-buffer
+9.8.1. glEnable(GL_DEPTH_TEST);
+9.8.2. glClear(GL_COLOR_BUFFER_BIT | BL_DEPTH_BUFFER_BIT);
 10. Camera
 11. Review
+12. Colors
+13. Basic Lighting
+13.1. Normal = mat3(transpose(inverse(model))) * aNormal;
+13.2. invers(model) is costly, should try to avoid
+13.3. Phone : pow(max(dot(reflectDir, viewDir)), 32) // 32 may be other value, shininess
+14. Materials
+14.1. GLSL can use struct
+14.2. location getting argument : structobjname.fieldname
+15. Lighting maps
